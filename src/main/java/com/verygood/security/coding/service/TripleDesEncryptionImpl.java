@@ -1,7 +1,7 @@
 package com.verygood.security.coding.service;
 
 import com.verygood.security.coding.api.Encryption;
-import com.verygood.security.coding.api.ISecretKeyService;
+import com.verygood.security.coding.api.IEncryptionKeyService;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -24,10 +24,11 @@ public class TripleDesEncryptionImpl implements Encryption {
     private static final String ALGORITHM = "DESede";
     private static final String TRANSFORMATION = ALGORITHM + "/CBC/PKCS5Padding";
     private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
-    private final ISecretKeyService secretKeyService;
+    private final IEncryptionKeyService secretKeyService;
     private IvParameterSpec ivParameterSpec;
+    private SecretKeySpec secretKeySpecs;
 
-    public TripleDesEncryptionImpl(ISecretKeyService secretKeyService) {
+    public TripleDesEncryptionImpl(IEncryptionKeyService secretKeyService) {
         this.secretKeyService = secretKeyService;
     }
 
@@ -57,12 +58,19 @@ public class TripleDesEncryptionImpl implements Encryption {
             InvalidAlgorithmParameterException, InvalidKeyException,
             NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
 
-        SecretKey key = new SecretKeySpec(secretKeyService.getKey(), ALGORITHM);
+        SecretKey key = getSecretKey();
         IvParameterSpec iv = getIvParameterSpec();
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);
         cipher.init(mode, key, iv);
 
         return cipher.doFinal(text);
+    }
+
+    private SecretKeySpec getSecretKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+        if (secretKeySpecs == null) {
+            secretKeySpecs = new SecretKeySpec(secretKeyService.getKey(), ALGORITHM);
+        }
+        return secretKeySpecs;
     }
 
     private IvParameterSpec getIvParameterSpec() throws NoSuchAlgorithmException {

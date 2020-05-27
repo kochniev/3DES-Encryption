@@ -1,13 +1,13 @@
 package com.verygood.security.coding.service;
 
-import com.verygood.security.coding.api.ISecretKeyService;
+import com.verygood.security.coding.api.IEncryptionKeyService;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
-public class SecretKeyServiceImpl implements ISecretKeyService {
+public class EncryptionKeyServiceImpl implements IEncryptionKeyService {
 
     private static final String PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA1";
     private static final String SHA1PRNG_ALGORITHM = "SHA1PRNG";
@@ -15,7 +15,7 @@ public class SecretKeyServiceImpl implements ISecretKeyService {
     private byte[] encryptionKeyInBytes;
     private String encryptionKey;
 
-    SecretKeyServiceImpl(String encryptionKey) {
+    EncryptionKeyServiceImpl(String encryptionKey) {
         this.encryptionKey = encryptionKey;
     }
 
@@ -28,6 +28,11 @@ public class SecretKeyServiceImpl implements ISecretKeyService {
     }
 
     private byte[] generateKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
+
+        if (encryptionKey == null) {
+            encryptionKey = "";
+        }
+
         int iterations = 1000;
         char[] chars = encryptionKey.toCharArray();
         byte[] salt = getSalt();

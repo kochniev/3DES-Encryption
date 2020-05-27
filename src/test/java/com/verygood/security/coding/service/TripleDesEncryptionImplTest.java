@@ -1,13 +1,12 @@
 package com.verygood.security.coding.service;
 
-import static com.verygood.security.coding.service.SecretKeyServiceImpl.KEY_SIZE;
+import static com.verygood.security.coding.service.EncryptionKeyServiceImpl.KEY_SIZE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEmptyString.emptyString;
 import static org.mockito.BDDMockito.given;
 
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -15,7 +14,6 @@ import java.security.spec.InvalidKeySpecException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +25,7 @@ class TripleDesEncryptionImplTest {
 
     private static final String STRING_TO_ENCRYPT = "test";
     @Mock
-    SecretKeyServiceImpl secretKeyService;
+    EncryptionKeyServiceImpl secretKeyService;
     @InjectMocks
     private TripleDesEncryptionImpl tripleDesEncryption;
 
