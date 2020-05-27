@@ -8,10 +8,16 @@ import com.verygood.security.coding.service.TripleDesEncryptionImpl;
 
 public class CodingApplication {
 
+    static final String ENCRYPTION_KEY_ENV_VARIABLE = "ENCRYPTION_KEY";
+    static final String TEXT_TO_ENCRYPT_ENV_VARIABLE = "TEXT_TO_ENCRYPT";
+
     public static void main(String[] args) {
         if (args.length <= 1) {
-            throw new WrongInputArgumentsException("Arguments are empty or half empty. Please input an encryption key and a text, "
-                    + "e.g. ./application.jar FHDGYR 'text to encrypt'");
+            readArgsFromEnvironmentVariables(args);
+            if (args.length <= 1) {
+                throw new WrongInputArgumentsException("Arguments are empty or half empty. Please input an encryption key and a text, "
+                        + "e.g. ./application.jar FHDGYR 'text to encrypt'");
+            }
         }
 
         String encryptionKey = args[0];
@@ -24,5 +30,12 @@ public class CodingApplication {
         System.out.println("Encrypted text: " + encryptedText);
         System.out.println("Decrypted text: " + decryptedText);
         System.exit(0);
+    }
+
+    private static void readArgsFromEnvironmentVariables(String[] args) {
+        String encryptionKey = System.getenv(ENCRYPTION_KEY_ENV_VARIABLE);
+        String textToEncrypt = System.getenv(TEXT_TO_ENCRYPT_ENV_VARIABLE);
+        args[0] = encryptionKey;
+        args[1] = textToEncrypt;
     }
 }

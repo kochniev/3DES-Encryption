@@ -1,0 +1,5 @@
+encryption:
+  build: .
+  environment:
+    - ENCRYPTION_KEY=KDKDKDKD
+    - TEXT_TO_ENCRYPT='some t3xt'
