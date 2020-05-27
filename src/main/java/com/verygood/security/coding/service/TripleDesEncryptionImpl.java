@@ -33,24 +33,33 @@ public class TripleDesEncryptionImpl implements Encryption {
     }
 
     @Override
-    public String encrypt(String text)
-            throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
-            NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+    public String encrypt(String text) {
         if (text == null) {
             return null;
         }
-        byte[] bytes = encryptDecryptInternal(text.getBytes(ENCODING), Cipher.ENCRYPT_MODE);
+        byte[] bytes = new byte[0];
+        try {
+            bytes = encryptDecryptInternal(text.getBytes(ENCODING), Cipher.ENCRYPT_MODE);
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchPaddingException
+                | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
         return Base64.getEncoder().encodeToString(bytes);
     }
 
     @Override
-    public String decrypt(String text) throws NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+    public String decrypt(String text) {
         if (text == null) {
             return null;
         }
         byte[] textDecoded = Base64.getDecoder().decode(text);
-        byte[] bytes = encryptDecryptInternal(textDecoded, Cipher.DECRYPT_MODE);
+        byte[] bytes = new byte[0];
+        try {
+            bytes = encryptDecryptInternal(textDecoded, Cipher.DECRYPT_MODE);
+        } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeyException | NoSuchPaddingException
+                | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
         return new String(bytes, ENCODING);
     }
 
