@@ -21,6 +21,9 @@ import javax.crypto.spec.SecretKeySpec;
 public class TripleDesEncryptionImpl implements Encryption {
 
     private static final Charset ENCODING = StandardCharsets.UTF_8;
+    private static final String ALGORITHM = "DESede";
+    private static final String TRANSFORMATION = ALGORITHM + "/CBC/PKCS5Padding";
+    private static final String SECURE_RANDOM_ALGORITHM = "SHA1PRNG";
     private final ISecretKeyService secretKeyService;
     private IvParameterSpec ivParameterSpec;
 
@@ -48,9 +51,9 @@ public class TripleDesEncryptionImpl implements Encryption {
             InvalidAlgorithmParameterException, InvalidKeyException,
             NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
 
-        final SecretKey key = new SecretKeySpec(secretKeyService.getKey(), "DESede");
+        final SecretKey key = new SecretKeySpec(secretKeyService.getKey(), ALGORITHM);
         final IvParameterSpec iv = getIvParameterSpec();
-        final Cipher cipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
+        final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
         cipher.init(mode, key, iv);
 
         return cipher.doFinal(text);
@@ -58,7 +61,7 @@ public class TripleDesEncryptionImpl implements Encryption {
 
     private IvParameterSpec getIvParameterSpec() throws NoSuchAlgorithmException {
         if (ivParameterSpec == null) {
-            SecureRandom randomSecureRandom = SecureRandom.getInstance("SHA1PRNG");
+            SecureRandom randomSecureRandom = SecureRandom.getInstance(SECURE_RANDOM_ALGORITHM);
             byte[] bytes = new byte[8];
             randomSecureRandom.nextBytes(bytes);
             ivParameterSpec = new IvParameterSpec(bytes);
