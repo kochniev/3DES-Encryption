@@ -31,16 +31,14 @@ class TripleDesEncryptionImplTest {
     @InjectMocks
     private TripleDesEncryptionImpl tripleDesEncryption;
 
-    @BeforeEach
-    void setUp() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
-    }
-
     @Test
     void encrypt_encryptsData()
             throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
             InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
             NoSuchPaddingException {
+        // given
+        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
+
         // when
         String encryptedText = tripleDesEncryption.encrypt(STRING_TO_ENCRYPT);
 
@@ -51,10 +49,32 @@ class TripleDesEncryptionImplTest {
     }
 
     @Test
-    void encrypt_decryptsData()
+    void encrypt_returnsTheSameValueOnMultipleInvocations()
             throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
             InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
             NoSuchPaddingException {
+        // given
+        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
+
+        // when
+        String firstEncryption = tripleDesEncryption.encrypt(STRING_TO_ENCRYPT);
+        String secondEncryption = tripleDesEncryption.encrypt(STRING_TO_ENCRYPT);
+
+        // then
+        assertThat(firstEncryption, is(not(emptyString())));
+        assertThat(secondEncryption, is(not(emptyString())));
+        assertThat(firstEncryption, is((secondEncryption)));
+
+    }
+
+    @Test
+    void decrypt_decryptsData()
+            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            NoSuchPaddingException {
+        // given
+        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
+
         // when
         String encryptedText = tripleDesEncryption.encrypt(STRING_TO_ENCRYPT);
         String decryptedText = tripleDesEncryption.decrypt(encryptedText);
@@ -62,6 +82,41 @@ class TripleDesEncryptionImplTest {
         // then
         assertThat(decryptedText, is(not(emptyString())));
         assertThat(decryptedText, is(STRING_TO_ENCRYPT));
+
+    }
+
+    @Test
+    void encrypt_properlyEncryptsEmptyString()
+            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            NoSuchPaddingException {
+        // given
+        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
+        String expectedString = "";
+
+        // when
+        String encryptedText = tripleDesEncryption.encrypt(expectedString);
+        String decryptedText = tripleDesEncryption.decrypt(encryptedText);
+
+        // then
+        assertThat(decryptedText, is(expectedString));
+
+    }
+
+    @Test
+    void encrypt_returnsNullOnNullString()
+            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
+            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
+            NoSuchPaddingException {
+        // given
+        String expectedString = null;
+
+        // when
+        String encryptedText = tripleDesEncryption.encrypt(expectedString);
+        String decryptedText = tripleDesEncryption.decrypt(encryptedText);
+
+        // then
+        assertThat(decryptedText, is(expectedString));
 
     }
 }

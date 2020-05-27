@@ -35,6 +35,9 @@ public class TripleDesEncryptionImpl implements Encryption {
     public String encrypt(String text)
             throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException,
             NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeySpecException {
+        if (text == null) {
+            return null;
+        }
         byte[] bytes = encryptDecryptInternal(text.getBytes(ENCODING), Cipher.ENCRYPT_MODE);
         return Base64.getEncoder().encodeToString(bytes);
     }
@@ -42,6 +45,9 @@ public class TripleDesEncryptionImpl implements Encryption {
     @Override
     public String decrypt(String text) throws NoSuchAlgorithmException,
             NoSuchPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+        if (text == null) {
+            return null;
+        }
         byte[] textDecoded = Base64.getDecoder().decode(text);
         byte[] bytes = encryptDecryptInternal(textDecoded, Cipher.DECRYPT_MODE);
         return new String(bytes, ENCODING);
@@ -51,9 +57,9 @@ public class TripleDesEncryptionImpl implements Encryption {
             InvalidAlgorithmParameterException, InvalidKeyException,
             NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
 
-        final SecretKey key = new SecretKeySpec(secretKeyService.getKey(), ALGORITHM);
-        final IvParameterSpec iv = getIvParameterSpec();
-        final Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        SecretKey key = new SecretKeySpec(secretKeyService.getKey(), ALGORITHM);
+        IvParameterSpec iv = getIvParameterSpec();
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
         cipher.init(mode, key, iv);
 
         return cipher.doFinal(text);
