@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
@@ -21,6 +22,7 @@ public class TripleDesEncryptionImpl implements Encryption {
 
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private final ISecretKeyService secretKeyService;
+    private IvParameterSpec ivParameterSpec;
 
     public TripleDesEncryptionImpl(ISecretKeyService secretKeyService) {
         this.secretKeyService = secretKeyService;
@@ -47,12 +49,21 @@ public class TripleDesEncryptionImpl implements Encryption {
             NoSuchPaddingException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
 
         final SecretKey key = new SecretKeySpec(secretKeyService.getKey(), "DESede");
-        // TODO: make random each time
-        final IvParameterSpec iv = new IvParameterSpec(new byte[8]);
+        final IvParameterSpec iv = getIvParameterSpec();
         final Cipher cipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
         cipher.init(mode, key, iv);
 
         return cipher.doFinal(text);
+    }
+
+    private IvParameterSpec getIvParameterSpec() throws NoSuchAlgorithmException {
+        if (ivParameterSpec == null) {
+            SecureRandom randomSecureRandom = SecureRandom.getInstance("SHA1PRNG");
+            byte[] bytes = new byte[8];
+            randomSecureRandom.nextBytes(bytes);
+            ivParameterSpec = new IvParameterSpec(bytes);
+        }
+        return ivParameterSpec;
     }
 
 }
