@@ -7,13 +7,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEmptyString.emptyString;
 import static org.mockito.BDDMockito.given;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,10 +25,7 @@ class TripleDesEncryptionImplTest {
     private TripleDesEncryptionImpl tripleDesEncryption;
 
     @Test
-    void encrypt_encryptsData()
-            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            NoSuchPaddingException {
+    void encrypt_encryptsData() throws InvalidKeySpecException, NoSuchAlgorithmException {
         // given
         given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
 
@@ -47,10 +39,7 @@ class TripleDesEncryptionImplTest {
     }
 
     @Test
-    void encrypt_returnsTheSameValueOnMultipleInvocations()
-            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            NoSuchPaddingException {
+    void encrypt_returnsTheSameValueOnMultipleInvocations() throws InvalidKeySpecException, NoSuchAlgorithmException {
         // given
         given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
 
@@ -66,10 +55,7 @@ class TripleDesEncryptionImplTest {
     }
 
     @Test
-    void decrypt_decryptsData()
-            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            NoSuchPaddingException {
+    void decrypt_decryptsData() throws InvalidKeySpecException, NoSuchAlgorithmException {
         // given
         given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
 
@@ -84,10 +70,23 @@ class TripleDesEncryptionImplTest {
     }
 
     @Test
-    void encrypt_properlyEncryptsEmptyString()
-            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            NoSuchPaddingException {
+    void decrypt_ProperlyDecryptsRussian() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        // given
+        given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
+        String expectedText = "русский";
+
+        // when
+        String encryptedText = tripleDesEncryption.encrypt(expectedText);
+        String decryptedText = tripleDesEncryption.decrypt(encryptedText);
+
+        // then
+        assertThat(decryptedText, is(not(emptyString())));
+        assertThat(decryptedText, is(expectedText));
+
+    }
+
+    @Test
+    void encrypt_properlyEncryptsEmptyString() throws InvalidKeySpecException, NoSuchAlgorithmException {
         // given
         given(secretKeyService.getKey()).willReturn(new byte[KEY_SIZE]);
         String expectedString = "";
@@ -102,10 +101,7 @@ class TripleDesEncryptionImplTest {
     }
 
     @Test
-    void encrypt_returnsNullOnNullString()
-            throws BadPaddingException, InvalidKeyException, IllegalBlockSizeException,
-            InvalidKeySpecException, InvalidAlgorithmParameterException, NoSuchAlgorithmException,
-            NoSuchPaddingException {
+    void encrypt_returnsNullOnNullString() {
         // given
         String expectedString = null;
 

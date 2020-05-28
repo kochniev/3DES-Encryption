@@ -34,7 +34,7 @@ public class EncryptionKeyServiceImpl implements IEncryptionKeyService {
             encryptionKey = "";
         }
 
-        int iterations = 1000;
+        int iterations = 10;
         char[] chars = encryptionKey.toCharArray();
         byte[] salt = getSalt();
 

@@ -14,6 +14,18 @@ class CodingApplicationTests {
 	}
 
 	@Test
+	void applicationEncryptsDecryptsRussian() {
+		String[] args = new String[]{"encryptionKey", "русский"};
+		CodingApplication.main(args);
+	}
+
+	@Test
+	void applicationEncryptsDecryptsRussian_whenKeyInRussian() {
+		String[] args = new String[]{"русскийКлюч", "русский"};
+		CodingApplication.main(args);
+	}
+
+	@Test
 	void applicationStartsWithoutErrors_ifKeyAndTextAreEmpty() {
 		String[] args = new String[]{"", ""};
 		CodingApplication.main(args);
