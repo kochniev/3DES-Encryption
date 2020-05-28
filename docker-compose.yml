@@ -1,4 +1,4 @@
-encryption:
+3des-algorithm_encryption:
   build: .
   environment:
     - ENCRYPTION_KEY="KDKDKDKD"

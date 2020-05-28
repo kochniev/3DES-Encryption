@@ -14,9 +14,14 @@ applies to the decrypt method
 - `mvn package`
 - `java -jar coding-0.0.1-SNAPSHOT-jar-with-dependencies.jar KEY 'text to encrypt'`
 
-## To run the application via docker
+## To run the application via docker-compose
 - Checkout the project
 - `mvn package`
-- `cd docker`
 - Open the `docker-compose.yml` and set `ENCRYPTION_KEY` `TEXT_TO_ENCRYPT` environment variables
-- `docker-compose up` 
+- `docker-compose up`
+
+## To run the application via docker 
+- Checkout the project
+- `mvn package`
+- `docker build -t 3des-algorithm_encryption . `
+- `docker run -it 3des-algorithm_encryption encryptionKey text`
